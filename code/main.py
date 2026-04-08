@@ -1,5 +1,6 @@
 ## Here we'll import the necessary libraries and modules for our application
 import pygame
+from extensions.start import start
 
 # pygame setup
 pygame.init()
@@ -20,12 +21,18 @@ while running:
     screen.fill("black")
 
     # RENDER YOUR GAME HERE
+    # Example: print hello world in the middle of the screen
+    start(screen)
+
+    Keys = pygame.key.get_pressed()
+    if any(Keys):
+        print("Key Pressed")
+        # Here you can add code to transition to the game state or start the game
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
 
-    # here we'll import the game logic and rendering code from our other files
 
 pygame.quit()
