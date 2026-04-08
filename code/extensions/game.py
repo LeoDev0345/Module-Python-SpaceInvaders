@@ -1,5 +1,6 @@
 import pygame
 from extensions.player import Player
+from extensions.bullet import Bullet
 
 def game(screen):
     loading(screen)
@@ -11,8 +12,13 @@ def game(screen):
     GAME_RUNNING = True
     
     clock = pygame.time.Clock()
+    bullets = []
+    
+    last_shot_time = 0
+    cooldown_duration = 500
     
     while GAME_RUNNING:
+        current_time = pygame.time.get_ticks()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 GAME_RUNNING = False
@@ -24,9 +30,21 @@ def game(screen):
             player.move_left()
         if keys[pygame.K_RIGHT]:
             player.move_right()
+        if keys[pygame.K_SPACE]:
+            if current_time - last_shot_time >= cooldown_duration:
+                bullets.append(Bullet(player.x + 40 - 2.5, player.y))  # Centrer la balle
+                last_shot_time = current_time
             
+
         screen.fill("black")
         player.draw(screen)
+        
+        for bullet in bullets[:]:
+            bullet.move()
+            bullet.draw(screen)
+            if bullet.y < 0:
+                bullets.remove(bullet)
+                
         pygame.display.flip()
         clock.tick(60)
         
@@ -53,4 +71,3 @@ def loading(screen):
     pygame.display.flip()
     pygame.time.delay(1000)
 
-    
