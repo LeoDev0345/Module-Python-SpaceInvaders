@@ -19,12 +19,13 @@ while running:
             running = False
 
     # fill the screen with a color to wipe away anything from last frame
-    screen.fill("black")
-
+    
     start(screen)
 
+    gameIsStarting = False
     Keys = pygame.key.get_pressed()
-    if any(Keys):
+    if any(Keys) and not gameIsStarting:
+        gameIsStarting = True
         game(screen)
         # Here you can add code to transition to the game state or start the game
 
