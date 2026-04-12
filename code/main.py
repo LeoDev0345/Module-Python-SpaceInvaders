@@ -5,7 +5,7 @@ from extensions.game import game
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((640, 720))
 title = "SpaceInvaders"
 pygame.display.set_caption(title)
 clock = pygame.time.Clock()
@@ -19,7 +19,7 @@ while running:
             running = False
 
     # fill the screen with a color to wipe away anything from last frame
-    
+    screen.fill("black")
     start(screen)
 
     gameIsStarting = False

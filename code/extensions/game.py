@@ -1,13 +1,25 @@
 import pygame
-from extensions.player import Player
+from classes.player import Player
+from extensions.aliensPosition import aliensPosition, updateAliensPosition
 from extensions.bullet import Bullet
 
 def game(screen):
     loading(screen)
 
     player = Player()
+    alien_positions = aliensPosition(screen)
+    alien_direction = "right"
     screen.fill("black")
+
+    # on dessine le joueur et les aliens
+    # joueur
     player.draw(screen)
+
+    #aliens
+    for row in alien_positions:
+        for alien in row:
+            alien.draw(screen)
+
     pygame.display.flip()
     GAME_RUNNING = True
     
@@ -32,12 +44,30 @@ def game(screen):
             player.move_right()
         if keys[pygame.K_SPACE]:
             if current_time - last_shot_time >= cooldown_duration:
-                bullets.append(Bullet(player.x + 40 - 2.5, player.y))  # Centrer la balle
+                bullets.append(Bullet(player.x + 20 - 2.5, player.y))  # Centrer la balle
                 last_shot_time = current_time
             
 
         screen.fill("black")
         player.draw(screen)
+
+        left_edge = alien_positions[0][0].x
+        right_edge = alien_positions[0][-1].x + 40
+
+        if alien_direction == "right":
+            if right_edge >= screen.get_width():
+                alien_direction = "left"
+            else:
+                alien_positions = updateAliensPosition(alien_positions, "right")
+        else:
+            if left_edge <= 0:
+                alien_direction = "right"
+            else:
+                alien_positions = updateAliensPosition(alien_positions, "left")
+
+        for row in alien_positions:
+            for alien in row:
+                alien.draw(screen)
         
         for bullet in bullets[:]:
             bullet.move()
