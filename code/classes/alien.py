@@ -1,0 +1,14 @@
+import pygame
+
+class Alien:
+
+    def __init__(self, spriteFile, pointByKill, x = None, y = None):
+        self.sprite = pygame.image.load(spriteFile).convert_alpha()
+        self.sprite = pygame.transform.smoothscale(self.sprite, (40, 32))
+
+        self.pointByKill = pointByKill
+        self.x = x if x is not None else 0
+        self.y = y if y is not None else 0
+
+    def draw(self, screen):
+        screen.blit(self.sprite, (self.x, self.y))
