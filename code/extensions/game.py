@@ -1,5 +1,6 @@
 import pygame
-from extensions.player import Player
+from classes.player import Player
+from classes.alien import Alien
 from extensions.bullet import Bullet
 
 def game(screen):
@@ -32,7 +33,7 @@ def game(screen):
             player.move_right()
         if keys[pygame.K_SPACE]:
             if current_time - last_shot_time >= cooldown_duration:
-                bullets.append(Bullet(player.x + 40 - 2.5, player.y))  # Centrer la balle
+                bullets.append(Bullet(player.x + 20 - 2.5, player.y))  # Centrer la balle
                 last_shot_time = current_time
             
 
