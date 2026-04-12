@@ -13,3 +13,8 @@ class Bullet :
     
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
+
+    def collides_with(self, alien):
+        bullet_rect = self.image.get_rect(topleft=(self.x, self.y))
+        alien_rect = alien.sprite.get_rect(topleft=(alien.x, alien.y))
+        return bullet_rect.colliderect(alien_rect)

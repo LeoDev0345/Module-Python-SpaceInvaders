@@ -1,6 +1,6 @@
 import pygame
 from pathlib import Path
-from extensions.bullet import Bullet
+from classes.bullet import Bullet
 
 ASSETS_DIR = Path(__file__).resolve().parents[2] / "assets"
 PLAYER_SPRITE_PATH = ASSETS_DIR / "player.png"

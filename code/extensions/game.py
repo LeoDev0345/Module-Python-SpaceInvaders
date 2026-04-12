@@ -1,7 +1,7 @@
 import pygame
 from classes.player import Player
 from extensions.aliensPosition import aliensPosition, updateAliensPosition
-from extensions.bullet import Bullet
+from classes.bullet import Bullet
 
 def game(screen):
     loading(screen)
@@ -71,9 +71,21 @@ def game(screen):
         
         for bullet in bullets[:]:
             bullet.move()
+
+            for row in alien_positions:
+                for alien in row:
+                    if alien.isAlive and bullet.collides_with(alien):
+                        alien.isAlive = False
+                        bullets.remove(bullet)
+                        break
+                else:
+                    continue
+                break
+
             bullet.draw(screen)
             if bullet.y < 0:
                 bullets.remove(bullet)
+
                 
         pygame.display.flip()
         clock.tick(60)
@@ -100,4 +112,3 @@ def loading(screen):
     screen.blit(go_text, go_rect)
     pygame.display.flip()
     pygame.time.delay(1000)
-
