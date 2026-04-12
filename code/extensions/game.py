@@ -6,6 +6,7 @@ from classes.bullet import Bullet
 def game(screen):
     loading(screen)
 
+    score = 0
     player = Player()
     alien_positions = aliensPosition(screen)
     alien_direction = "right"
@@ -49,6 +50,12 @@ def game(screen):
             
 
         screen.fill("black")
+
+        font = pygame.font.SysFont("Arial", 24)
+        text_surface = font.render(f"Score: {score}", True, (255, 255, 255))
+
+        screen.blit(text_surface, (10, 10))
+
         player.draw(screen)
 
         left_edge = alien_positions[0][0].x
@@ -77,6 +84,7 @@ def game(screen):
                     if alien.isAlive and bullet.collides_with(alien):
                         alien.isAlive = False
                         bullets.remove(bullet)
+                        score += alien.pointByKill
                         break
                 else:
                     continue
