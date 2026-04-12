@@ -1,11 +1,12 @@
 import pygame
 from classes.player import Player
 from extensions.aliensPosition import aliensPosition, updateAliensPosition
-from extensions.bullet import Bullet
+from classes.bullet import Bullet
 
 def game(screen):
     loading(screen)
 
+    score = 0
     player = Player()
     alien_positions = aliensPosition(screen)
     alien_direction = "right"
@@ -49,6 +50,12 @@ def game(screen):
             
 
         screen.fill("black")
+
+        font = pygame.font.SysFont("Arial", 24)
+        text_surface = font.render(f"Score: {score}", True, (255, 255, 255))
+
+        screen.blit(text_surface, (10, 10))
+
         player.draw(screen)
 
         left_edge = alien_positions[0][0].x
@@ -71,9 +78,22 @@ def game(screen):
         
         for bullet in bullets[:]:
             bullet.move()
+
+            for row in alien_positions:
+                for alien in row:
+                    if alien.isAlive and bullet.collides_with(alien):
+                        alien.isAlive = False
+                        bullets.remove(bullet)
+                        score += alien.pointByKill
+                        break
+                else:
+                    continue
+                break
+
             bullet.draw(screen)
             if bullet.y < 0:
                 bullets.remove(bullet)
+
                 
         pygame.display.flip()
         clock.tick(60)
@@ -100,4 +120,3 @@ def loading(screen):
     screen.blit(go_text, go_rect)
     pygame.display.flip()
     pygame.time.delay(1000)
-
