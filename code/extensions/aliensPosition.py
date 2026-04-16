@@ -1,7 +1,7 @@
 import pygame
 from classes.alien import Alien
 
-def aliensPosition(screen):
+def aliensPosition():
     alienPositions = [
         [],
         [],

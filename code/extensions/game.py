@@ -1,14 +1,14 @@
 import pygame
 from classes.player import Player
 from extensions.aliensPosition import aliensPosition, updateAliensPosition
-from classes.bullet import Bullet
+from classes.bullet import BulletPlayer
 
 def game(screen):
     loading(screen)
 
     score = 0
     player = Player()
-    alien_positions = aliensPosition(screen)
+    alien_positions = aliensPosition()
     alien_direction = "right"
     screen.fill("black")
 
@@ -26,11 +26,13 @@ def game(screen):
     
     clock = pygame.time.Clock()
     bullets = []
+    level = 1
     
     last_shot_time = 0
     cooldown_duration = 500
     
     while GAME_RUNNING:
+        ## Gestion des événements
         current_time = pygame.time.get_ticks()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -45,10 +47,10 @@ def game(screen):
             player.move_right()
         if keys[pygame.K_SPACE]:
             if current_time - last_shot_time >= cooldown_duration:
-                bullets.append(Bullet(player.x + 20 - 2.5, player.y))  # Centrer la balle
+                bullets.append(BulletPlayer(player.x + 20 - 2.5, player.y))  # Centrer la balle
                 last_shot_time = current_time
             
-
+        ## Mise à jour de l'affichage
         screen.fill("black")
 
         font = pygame.font.SysFont("Arial", 24)
@@ -61,6 +63,7 @@ def game(screen):
         left_edge = alien_positions[0][0].x
         right_edge = alien_positions[0][-1].x + 40
 
+        ## Mise à jour de la position des aliens et du sens de déplacement
         if alien_direction == "right":
             if right_edge >= screen.get_width():
                 alien_direction = "left"
@@ -72,13 +75,16 @@ def game(screen):
             else:
                 alien_positions = updateAliensPosition(alien_positions, "left")
 
+        ## Dessin des aliens
         for row in alien_positions:
             for alien in row:
                 alien.draw(screen)
         
+        ## Mise à jour des balles
         for bullet in bullets[:]:
             bullet.move()
 
+            ## Vérification des collisions entre les balles et les aliens
             for row in alien_positions:
                 for alien in row:
                     if alien.isAlive and bullet.collides_with(alien):
@@ -94,21 +100,26 @@ def game(screen):
             if bullet.y < 0:
                 bullets.remove(bullet)
 
-                
+        
+        if (level * 800 == score):
+            level += 1
+            loading(screen, level)
+            alien_positions = aliensPosition()
+
         pygame.display.flip()
         clock.tick(60)
         
 
-def loading(screen):
+def loading(screen, level=1):
     screen.fill("blue")
 
     timer = 3
-    font = pygame.font.SysFont("Arial", 48)
-    timer_text = font.render(f"Le jeu démarre dans: {timer}", True, (255, 255, 255))
+    font = pygame.font.SysFont("Arial", 36)
+    timer_text = font.render(f"Le niveau {level} démarre dans: {timer}", True, (255, 255, 255))
     timer_rect = timer_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     
     for i in range(timer, 0, -1):
-        timer_text = font.render(f"Le jeu démarre dans: {i}", True, (255, 255, 255))
+        timer_text = font.render(f"Le niveau {level} démarre dans : {i}", True, (255, 255, 255))
         screen.fill("darkblue")
         screen.blit(timer_text, timer_rect)
         pygame.display.flip()

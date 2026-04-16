@@ -1,6 +1,5 @@
 import pygame
 from pathlib import Path
-from classes.bullet import Bullet
 
 ASSETS_DIR = Path(__file__).resolve().parents[2] / "assets"
 PLAYER_SPRITE_PATH = ASSETS_DIR / "player.png"
@@ -14,11 +13,11 @@ class Player:
         self.cool_down = 2
 
     def move_left(self, speed=5):
-        if self.x > 0:  # Ensure the player doesn't move off the left edge
+        if self.x > 0:  # On s'assure que le joueur ne sors pas de l'écran
             self.x -= speed
 
     def move_right(self, speed=5):
-        if self.x < 640 - 40:  # Ensure the player doesn't move off the right edge
+        if self.x < 640 - 40:  # On s'assure que le joueur ne sors pas de l'écran
             self.x += speed
 
     def draw(self, screen):

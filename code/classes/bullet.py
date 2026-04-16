@@ -1,6 +1,6 @@
 import pygame
 
-class Bullet :
+class BulletPlayer :
     def __init__(self, x, y):
         self.x = x
         self.y = y
