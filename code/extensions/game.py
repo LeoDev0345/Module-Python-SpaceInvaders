@@ -68,12 +68,12 @@ def game(screen):
             if right_edge >= screen.get_width():
                 alien_direction = "left"
             else:
-                alien_positions = updateAliensPosition(alien_positions, "right")
+                alien_positions = updateAliensPosition(alien_positions, "right", level)
         else:
             if left_edge <= 0:
                 alien_direction = "right"
             else:
-                alien_positions = updateAliensPosition(alien_positions, "left")
+                alien_positions = updateAliensPosition(alien_positions, "left", level)
 
         ## Dessin des aliens
         for row in alien_positions:

@@ -24,7 +24,7 @@ def aliensPosition():
 
     return alienPositions
     
-def updateAliensPosition(alienPositions, side):
+def updateAliensPosition(alienPositions, side, level):
     if (side == "right"):
         for row in alienPositions:
             for alien in row:
@@ -33,7 +33,7 @@ def updateAliensPosition(alienPositions, side):
     elif (side == "left"):
         for row in alienPositions:
             for alien in row:
-                alien.x -= 0.5  # Déplacer les aliens vers la gauche
-                alien.y += 0.05  # Descendre les aliens vers le bas
+                alien.x -= 0.5 * (1 + (level-1) * 5 / 100)  # Déplacer les aliens vers la gauche
+                alien.y += 0.05 * (1 + (level-1) * 5 / 100) # Descendre les aliens vers le bas
     
     return alienPositions
