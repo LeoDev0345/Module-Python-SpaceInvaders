@@ -1,4 +1,6 @@
 import pygame
+from classes.bullet import BulletAlien
+
 
 class Alien:
 
@@ -14,3 +16,6 @@ class Alien:
     def draw(self, screen):
         if self.isAlive:
             screen.blit(self.sprite, (self.x, self.y))
+
+    def shoot(self):
+        return BulletAlien(self.x + self.sprite.get_width() // 2, self.y + self.sprite.get_height())

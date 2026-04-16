@@ -2,6 +2,7 @@ import pygame
 from classes.player import Player
 from extensions.aliensPosition import aliensPosition, updateAliensPosition
 from classes.bullet import BulletPlayer
+from random import randint
 
 def game(screen):
     loading(screen)
@@ -26,6 +27,7 @@ def game(screen):
     
     clock = pygame.time.Clock()
     bullets = []
+    alienBullets = []
     level = 1
     
     last_shot_time = 0
@@ -100,6 +102,24 @@ def game(screen):
             if bullet.y < 0:
                 bullets.remove(bullet)
 
+        choice = randint(1, 100)
+        if choice <= 1 * level:
+            alien_row = randint(0, len(alien_positions) - 1)
+            alien_col = randint(0, len(alien_positions[0]) - 1)
+            alien = alien_positions[alien_row][alien_col]
+            if alien.isAlive:
+                alienBullets.append(alien.shoot())
+
+        for bullet in alienBullets[:]:
+            bullet.move()
+
+            if bullet.collides_with(player):
+                GAME_RUNNING = False
+                break
+
+            bullet.draw(screen)
+            if bullet.y > screen.get_height() or bullet.collides_with(player):
+                alienBullets.remove(bullet)
         
         if (level * 800 == score):
             level += 1
