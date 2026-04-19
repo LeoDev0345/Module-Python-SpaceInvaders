@@ -11,6 +11,7 @@ class Player:
         self.x = 300
         self.y = 620
         self.cool_down = 2
+        self.life = 3
 
     def move_left(self, speed=5):
         if self.x > 0:  # On s'assure que le joueur ne sors pas de l'écran

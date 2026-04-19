@@ -2,6 +2,7 @@ import pygame
 from classes.player import Player
 from extensions.aliensPosition import aliensPosition, updateAliensPosition
 from classes.bullet import BulletPlayer
+from classes.life import Life
 from random import randint
 
 def game(screen):
@@ -13,14 +14,22 @@ def game(screen):
     alien_direction = "right"
     screen.fill("black")
 
-    # on dessine le joueur et les aliens
+    # on dessine le joueur, les coeurs et les aliens
     # joueur
     player.draw(screen)
-
+    print(player.life)
     #aliens
     for row in alien_positions:
         for alien in row:
             alien.draw(screen)
+
+    lifeList = []
+    for i in range(player.life):
+        heart = Life(10 + i * 40, 50)
+        lifeList.append(heart)
+
+    for heart in lifeList:
+        heart.draw(screen)
 
     pygame.display.flip()
     GAME_RUNNING = True
@@ -106,6 +115,7 @@ def game(screen):
             if bullet.y < 0:
                 bullets.remove(bullet)
 
+        ## Tir aléatoire des aliens
         choice = randint(1, 100)
         if choice <= 1 * level:
             alien_row = randint(0, len(alien_positions) - 1)
@@ -114,17 +124,33 @@ def game(screen):
             if alien.isAlive:
                 alienBullets.append(alien.shoot())
 
+        ## Mise à jour des bullets aliens
         for bullet in alienBullets[:]:
             bullet.move()
 
+            ## Gestion de la collision entre les balles aliens et le joueur
             if bullet.collides_with(player):
-                GAME_RUNNING = False
+                player.life -= 1
+                alienBullets.remove(bullet)
                 break
 
             bullet.draw(screen)
-            if bullet.y > screen.get_height() or bullet.collides_with(player):
+            if bullet.y > screen.get_height():
                 alienBullets.remove(bullet)
+
+        ## Vérification de la vie du joueur
+        if player.life <= 0:
+            GAME_RUNNING = False
+        else :
+            lifeList = []
+            for i in range(player.life):
+                heart = Life(640 - 40 - i * 40, 20)
+                lifeList.append(heart)
+
+            for heart in lifeList:
+                heart.draw(screen)
         
+        ## Vérification du score pour passer au niveau suivant
         if (level * 800 == score):
             level += 1
             loading(screen, level)
