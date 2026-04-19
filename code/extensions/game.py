@@ -81,6 +81,10 @@ def game(screen):
         for row in alien_positions:
             for alien in row:
                 alien.draw(screen)
+
+                if alien.collides_with(player):
+                    GAME_RUNNING = False
+                    break
         
         ## Mise à jour des balles
         for bullet in bullets[:]:
@@ -128,7 +132,8 @@ def game(screen):
 
         pygame.display.flip()
         clock.tick(60)
-        
+    
+    loose(screen, score)
 
 def loading(screen, level=1):
     screen.fill("blue")
@@ -151,3 +156,14 @@ def loading(screen, level=1):
     screen.blit(go_text, go_rect)
     pygame.display.flip()
     pygame.time.delay(1000)
+
+def loose(screen, score):
+    screen.fill("red")
+
+    font = pygame.font.SysFont("Arial", 36)
+    lose_text = font.render(f"Vous avez perdu ! Votre score : {score}", True, (255, 255, 255))
+    lose_rect = lose_text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    
+    screen.blit(lose_text, lose_rect)
+    pygame.display.flip()
+    pygame.time.delay(3000)
