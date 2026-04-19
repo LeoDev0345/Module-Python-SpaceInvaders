@@ -3,16 +3,22 @@ from classes.player import Player
 from extensions.aliensPosition import aliensPosition, updateAliensPosition
 from classes.bullet import BulletPlayer
 from classes.life import Life
+from classes.bonus import Bonus
 from random import randint
 
 def game(screen):
     loading(screen)
+    SHOOTING_BONUS_DURATION = 3000
+    PROTECT_BONUS_DURATION = 5000
 
     score = 0
     player = Player()
     alien_positions = aliensPosition()
     alien_direction = "right"
     screen.fill("black")
+    start_shoot_time = 0
+    start_protect_time = 0
+    bonus_list = []
 
     # on dessine le joueur, les coeurs et les aliens
     # joueur
@@ -40,7 +46,6 @@ def game(screen):
     level = 1
     
     last_shot_time = 0
-    cooldown_duration = 500
     
     while GAME_RUNNING:
         ## Gestion des événements
@@ -50,17 +55,25 @@ def game(screen):
                 GAME_RUNNING = False
                 pygame.quit()
                 exit()
-                
+
+        if (current_time - start_shoot_time >= SHOOTING_BONUS_DURATION):
+            start_shoot_time = 0
+            player.unshoot()
+
+        if (current_time - start_protect_time >= PROTECT_BONUS_DURATION):
+            start_protect_time = 0
+            player.unprotect()
+
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             player.move_left()
         if keys[pygame.K_RIGHT]:
             player.move_right()
         if keys[pygame.K_SPACE]:
-            if current_time - last_shot_time >= cooldown_duration:
-                bullets.append(BulletPlayer(player.x + 20 - 2.5, player.y))  # Centrer la balle
+            if current_time - last_shot_time >= player.cool_down:
+                bullets.append(BulletPlayer(player.x + 40 - 2.5, player.y))  # Centrer la balle
                 last_shot_time = current_time
-            
+
         ## Mise à jour de l'affichage
         screen.fill("black")
 
@@ -91,7 +104,7 @@ def game(screen):
             for alien in row:
                 alien.draw(screen)
 
-                if alien.collides_with(player):
+                if alien.collides_with(player) :
                     GAME_RUNNING = False
                     break
         
@@ -106,14 +119,36 @@ def game(screen):
                         alien.isAlive = False
                         bullets.remove(bullet)
                         score += alien.pointByKill
+
+                        bonus_chance = randint(1, 100)
+                        if bonus_chance <= 5:  # 10% de chance d'obtenir un bonus
+                            if bonus_chance % 2 == 0:
+                                bonus_list.append(Bonus(alien.x, alien.y, "protect"))
+                            else:
+                                bonus_list.append(Bonus(alien.x, alien.y, "shoot"))
                         break
-                else:
-                    continue
-                break
 
             bullet.draw(screen)
             if bullet.y < 0:
                 bullets.remove(bullet)
+
+        ## Dessin des bonus
+        for bonus in bonus_list[:]:
+            bonus.move()
+            bonus.draw(screen)
+
+            if bonus.collides_with(player):
+                if bonus.type == "protect":
+                    start_protect_time = current_time
+                    player.protect()
+                elif bonus.type == "shoot":
+                    start_shoot_time = current_time
+                    player.shoot()
+                bonus_list.remove(bonus)
+            
+
+            if bonus.y > screen.get_height():
+                bonus_list.remove(bonus)
 
         ## Tir aléatoire des aliens
         choice = randint(1, 100)
@@ -130,9 +165,14 @@ def game(screen):
 
             ## Gestion de la collision entre les balles aliens et le joueur
             if bullet.collides_with(player):
-                player.life -= 1
-                alienBullets.remove(bullet)
-                break
+                if start_protect_time != 0:
+                    alienBullets.remove(bullet)
+                    pass
+                else:
+                    player.life -= 1
+                    alienBullets.remove(bullet)
+                    break
+
 
             bullet.draw(screen)
             if bullet.y > screen.get_height():
@@ -153,6 +193,11 @@ def game(screen):
         ## Vérification du score pour passer au niveau suivant
         if (level * 800 == score):
             level += 1
+            start_protect_time = 0
+            start_shoot_time = 0
+            bullets = []
+            alienBullets = []
+            bonus_list = []
             loading(screen, level)
             alien_positions = aliensPosition()
 
