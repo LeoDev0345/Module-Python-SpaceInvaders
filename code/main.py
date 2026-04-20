@@ -2,6 +2,10 @@
 import pygame
 from extensions.start import start
 from extensions.game import game
+from pathlib import Path
+
+ASSETS_DIR = Path(__file__).resolve().parents[1] / "assets"
+MUSIC_PATH = ASSETS_DIR / "sound-effects" / "game-music.mp3"
 
 # pygame setup
 pygame.init()
@@ -10,11 +14,13 @@ title = "SpaceInvaders"
 pygame.display.set_caption(title)
 clock = pygame.time.Clock()
 running = True
-
+music = pygame.mixer.Sound(MUSIC_PATH)
+music.play(-1)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
 
     screen.fill("black")
     start(screen)

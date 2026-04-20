@@ -5,6 +5,10 @@ from classes.bullet import BulletPlayer
 from classes.life import Life
 from classes.bonus import Bonus
 from random import randint
+from pathlib import Path
+
+ASSETS_DIR = Path(__file__).resolve().parents[2] / "assets"
+SHOOTING_SOUND_PATH = ASSETS_DIR / "sound-effects" / "shooting-sound-effect.mp3"
 
 def game(screen):
     loading(screen)
@@ -19,6 +23,7 @@ def game(screen):
     start_shoot_time = 0
     start_protect_time = 0
     bonus_list = []
+    shooting_sound = pygame.mixer.Sound(SHOOTING_SOUND_PATH)
 
     # on dessine le joueur, les coeurs et les aliens
     # joueur
@@ -71,6 +76,7 @@ def game(screen):
             player.move_right()
         if keys[pygame.K_SPACE]:
             if current_time - last_shot_time >= player.cool_down:
+                shooting_sound.play()
                 bullets.append(BulletPlayer(player.x + 40 - 2.5, player.y))  # Centrer la balle
                 last_shot_time = current_time
 
